@@ -48,7 +48,7 @@ def main(argv):
         model.eval()  # Ensure the model is in evaluation mode if continuing training.
 
     learner = MineSweeperLearner(modelChoice, model)
-    learner.learnMineSweeper(nSamples, nBatches, epochsPerBatch, verbose=True)
+    learner.learn_mine_sweeper(nSamples, nBatches, epochsPerBatch, verbose=True)
 
     torch.save(learner.model.state_dict(), "trainedModels/" + modelChoice + ".pt")
 
