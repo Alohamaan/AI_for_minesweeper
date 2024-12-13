@@ -3,9 +3,9 @@ from minesweeper_learner import MineSweeperLearner
 import torch
 
 
-nSamples = 64
-nBatches = 128
-epochsPerBatch = 381
+nSamples = 128
+nBatches = 3000
+epochsPerBatch = 5
 if __name__ == '__main__':
     model = model1.model
     learner = MineSweeperLearner('model1.py', model)
