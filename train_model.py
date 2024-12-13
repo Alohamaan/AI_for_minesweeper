@@ -1,56 +1,76 @@
-from minesweeper_learner import MineSweeperLearner
-import sys
-import getopt
-import torch
+import os
+import numpy as np
+import train_model_background
 import importlib.util
 import importlib.machinery
+
+#Prompt user to specify the model they want to use
+#get raw model code
 
 def load_source(modname, filename):
     loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
     module = importlib.util.module_from_spec(spec)
-    # Uncomment the following line to cache the module.
-    # sys.modules[module.__name__] = module
     loader.exec_module(module)
     return module
 
-def main(argv):
-    option = ''
-    modelChoice = ''
-    nBatches = 1000
-    nSamples = 1000
-    epochsPerBatch = 1
-    try:
-        opts, args = getopt.getopt(argv, "ho:m:b:s:e:", ["option=", "model=", "batches=", "nSamples=", "epochsPerBatch="])
-    except getopt.GetoptError:
-        print('train_model_background.py -o <option> -m <model>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('train_model_background.py -o <option> -m <model>')
-            sys.exit()
-        elif opt in ("-o", "--option"):
-            option = arg
-        elif opt in ("-m", "--model"):
-            modelChoice = arg
-        elif opt in ("-b", "--batches"):
-            nBatches = int(arg)
-        elif opt in ("-s", "--nSamples"):
-            nSamples = int(arg)
-        elif opt in ("-e", "--epochsPerBatch"):
-            epochsPerBatch = int(arg)
 
-    if option == "trainNew":
-        modelSource = load_source(modelChoice, "modelCode/" + modelChoice + ".py")
-        model = modelSource.model
-    elif option == "continueTraining":
-        model = torch.load("trainedModels/" + modelChoice + ".pt")
-        model.eval()  # Ensure the model is in evaluation mode if continuing training.
+models = os.listdir("../modelCode")
+models = [i.replace(".py","") for i in models if not ".pyc" in i and i[0] != '.']
+models = np.sort(models)
 
-    learner = MineSweeperLearner(modelChoice, model)
-    learner.learn_mine_sweeper(nSamples, nBatches, epochsPerBatch, verbose=True)
+#and pre-trained models
+preTrainedModels = os.listdir("../trainedModels")
+preTrainedModels = np.sort(preTrainedModels)
 
-    torch.save(learner.model.state_dict(), "trainedModels/" + modelChoice + ".pt")
+toDo = int(input("What do you want to do? \n1. Train a new model from scratch \n2. Keep training a pre-trained model\n"))
 
-if __name__ == "__main__":
-   main(sys.argv[1:])
+modelChoice = ''
+match toDo:
+    case 1:
+        prompt = "Choose which model to train (from 'modelCode' folder): \n"
+        for i in range(len(models)):
+            prompt += str(i+1) +  ". " + models[i] + '\n'
+        modelChoice = int(input(prompt))
+        modelChoice = models[modelChoice-1]
+    case 2:
+        prompt = "Choose which model to continue training (from 'trainedModels' folder): \n"
+        for i in range(len(preTrainedModels)):
+            prompt += str(i+1) +  ". " + preTrainedModels[i] + '\n'
+        modelChoiceInd = int(input(prompt))
+        modelChoice = preTrainedModels[modelChoiceInd-1]
+
+#get batch info
+samples = int(input("How many samples per batch? "))
+nBatches = int(input("How many batches? "))
+nEpochsPerBatch = int(input("How many training epochs on each batch? "))
+
+print(modelChoice)
+print(nBatches)
+print(samples)
+print(nEpochsPerBatch)
+
+#launch background process
+if toDo == 1:
+    args = [
+        "train_model_background.py",  # This is typically the script name
+        "-o", "trainNew",
+        "-m", modelChoice,
+        "-b", str(nBatches),
+        "-s", str(samples),
+        "-e", str(nEpochsPerBatch)
+    ]
+
+elif toDo == 2:
+    args = [
+        "train_model_background.py",  # This is typically the script name
+        "-o", "continueTraining",
+        "-m", modelChoice,
+        "-b", str(nBatches),
+        "-s", str(samples),
+        "-e", str(nEpochsPerBatch)
+    ]
+    train_model_background.main(args)
+
+print("Model training output is being written to log/" + modelChoice + ".out")
+print("Model will be saved every 100 batches to trainedModels/" + modelChoice)
