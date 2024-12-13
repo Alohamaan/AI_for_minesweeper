@@ -11,18 +11,16 @@ def load_source(modname, filename):
     loader = importlib.machinery.SourceFileLoader(modname, filename)
     spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
     module = importlib.util.module_from_spec(spec)
-    # Uncomment the following line to cache the module.
-    # sys.modules[module.__name__] = module
     loader.exec_module(module)
     return module
 
 
-models = os.listdir("modelCode")
+models = os.listdir("../modelCode")
 models = [i.replace(".py","") for i in models if not ".pyc" in i and i[0] != '.']
 models = np.sort(models)
 
 #and pre-trained models
-preTrainedModels = os.listdir("trainedModels")
+preTrainedModels = os.listdir("../trainedModels")
 preTrainedModels = np.sort(preTrainedModels)
 
 toDo = int(input("What do you want to do? \n1. Train a new model from scratch \n2. Keep training a pre-trained model\n"))
@@ -54,11 +52,25 @@ print(nEpochsPerBatch)
 
 #launch background process
 if toDo == 1:
-    args = {}
-    train_model_background.main(modelChoice, str(nBatches), str(samples), str(nEpochsPerBatch))
-    # os.system("nohup python train_model_background.py -o trainNew -m " + modelChoice + " -b " + str(nBatches) + " -s " + str(samples) + " -e " + str(nEpochsPerBatch) + " >log/" + modelChoice + ".out &")
+    args = [
+        "train_model_background.py",  # This is typically the script name
+        "-o", "trainNew",
+        "-m", modelChoice,
+        "-b", str(nBatches),
+        "-s", str(samples),
+        "-e", str(nEpochsPerBatch)
+    ]
+
 elif toDo == 2:
-    os.system("nohup python train_model_background.py -o continueTraining -m " + modelChoice + " -b " + str(nBatches) + " -s " + str(samples) + " -e " + str(nEpochsPerBatch) + " >log/" + modelChoice + ".out &")
+    args = [
+        "train_model_background.py",  # This is typically the script name
+        "-o", "continueTraining",
+        "-m", modelChoice,
+        "-b", str(nBatches),
+        "-s", str(samples),
+        "-e", str(nEpochsPerBatch)
+    ]
+    train_model_background.main(args)
 
 print("Model training output is being written to log/" + modelChoice + ".out")
 print("Model will be saved every 100 batches to trainedModels/" + modelChoice)
