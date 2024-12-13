@@ -1,5 +1,5 @@
 import numpy as np
-from model_training.minesweeper.MineSweeper import MineSweeper
+from minesweeper.MineSweeper import MineSweeper
 import time
 import torch
 import os
