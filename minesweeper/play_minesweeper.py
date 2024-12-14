@@ -18,7 +18,7 @@ def playMinesweeper():
     while playing:
         message = "let's play."
         game = MineSweeper()
-        while not game.gameOver:
+        while not game.game_over:
             # os.system("clear")
             print(message)
             print("There are 99 total mines.")
@@ -30,7 +30,7 @@ def playMinesweeper():
             if coordinates[0] > 0 and coordinates[0] <= game.dim1 and coordinates[1] > 0 and coordinates[
                 1] <= game.dim2:
                 coordinates = (coordinates[0] - 1, coordinates[1] - 1)
-                game.selectCell(coordinates)
+                game.select_cell(coordinates)
             else:
                 message = outOfBoundsMessages[np.random.randint(0, len(outOfBoundsMessages), 1)[0]]
         if game.victory:
