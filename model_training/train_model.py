@@ -15,12 +15,12 @@ def load_source(modname, filename):
     return module
 
 
-models = os.listdir("../modelCode")
+models = os.listdir("../model_code")
 models = [i.replace(".py","") for i in models if not ".pyc" in i and i[0] != '.']
 models = np.sort(models)
 
 #and pre-trained models
-preTrainedModels = os.listdir("../trainedModels")
+preTrainedModels = os.listdir("../pretrained_models")
 preTrainedModels = np.sort(preTrainedModels)
 
 toDo = int(input("What do you want to do? \n1. Train a new model from scratch \n2. Keep training a pre-trained model\n"))
