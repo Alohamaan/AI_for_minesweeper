@@ -1,5 +1,5 @@
-from modelCode import model1
-from minesweeper_learner import MineSweeperLearner
+from model_code import model1
+from model_training.minesweeper_learner import MineSweeperLearner
 import torch
 
 
@@ -9,6 +9,6 @@ epochsPerBatch = 5
 if __name__ == '__main__':
     model = model1.model
     learner = MineSweeperLearner('model1.py', model)
-    learner.learnMineSweeper(nSamples, nBatches, epochsPerBatch, verbose=True)
+    learner.learn_mine_sweeper(nSamples, nBatches, epochsPerBatch, verbose=True)
 
-    torch.save(learner.model.state_dict(), "trainedModels/" + 'model1' + ".pt")
+    torch.save(learner.model.state_dict(), "pretrained_models/" + 'model1' + ".pt")
