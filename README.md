@@ -9,4 +9,4 @@ MinesweeperLearner - here model is being trained
 Minesweeper - basically, saves the game board state, also reacts to actions
 modelCode - here is the source code of the models, probably, i`ll make some more models
 
-ALSO I GONNA REFACTOR THE STRUCTURE OF A PROJECT, SO I WILL CHANGE PATHS IN THE PROJECT, SO IF SOMETHING DOES NOT WORK, CHECH PATHS, BTW NOW, MODEL DOESNT WORK YET
+ALSO I GONNA REFACTOR THE STRUCTURE OF A PROJECT, SO I WILL CHANGE PATHS IN THE PROJECT, SO IF SOMETHING DOES NOT WORK, CHECK PATHS, IMPORTS
